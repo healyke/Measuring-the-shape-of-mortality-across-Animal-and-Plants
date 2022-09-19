@@ -1,0 +1,1299 @@
+---
+title: "Calculate population level metrics for axis analysis"
+author: "Kevin Healy"
+date: "19 June 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+This document outlines the analysis of how timing of mortailty is linked with 
+parental care in the "Alternative measures of the shape of mortality reveals 
+hidden type IV survivorship curves and associations with parental care at 
+macroecological scales"
+
+#Packages and Data
+First we set up the libraries and data for the analysis. Packages such as 
+mulTree will require using devtools to download from Github (See here https://github.com/TGuillerme/mulTree) 
+
+```{r install_packages}
+library(devtools)
+library(popbio)
+library(popdemo)
+library(ape)
+library(caper)
+library(phytools)
+library(MCMCglmm)
+library(mulTree)
+library(Rage)
+```
+
+The data is from the COMADRE database version 2.0.1. We will also upload some
+useful functions fromt he COMADRE file.
+
+```{r data}
+
+load("COMADRE_v.X.X.X.RData")
+
+source("COMADRE_functions.R")
+```
+
+The phylogeny is from the Healy et al 2019 paper (See here https://www.nature.com/articles/s41559-019-0938-7). We can plot it as well.
+
+```{r phylogeny}
+
+com_tree <- read.tree("COMADRE_phylo_june_2017_100.tre")
+plot(com_tree[[1]], cex = 0.2, type = "fan")
+
+```
+
+Next we will  load some trait data associated with parental care.
+
+```{r trait data}
+
+trophic_data <- read.csv("Trophic_data_June16_2017.csv", 
+                         sep = ",", header = T)
+
+```
+
+
+WE now need to subset the comadre database to the species we want. This follows
+Healy et al 2019 (See here https://www.nature.com/articles/s41559-019-0938-7)
+using pooled and mean metrices that are unmanipulated.
+
+```{r subsetting}
+
+###Subset entries form comadre with the below restictions for pooled and mean matrices.
+pooled_Metadata <- (subset(comadre$metadata, 
+                           MatrixComposite == "Pooled"
+                           & MatrixDimension >= 2 
+                           & StudyDuration >= 2 
+                           & MatrixSplit == "Divided" 
+                           & MatrixFec == "Yes" 
+                           & MatrixTreatment == "Unmanipulated"
+                           & AnnualPeriodicity == "1"
+                           & SurvivalIssue<=1
+))
+
+mean_Metadata <- (subset(comadre$metadata,
+                         MatrixComposite == "Mean" 
+                         & MatrixDimension >= 2 
+                         & StudyDuration >= 2 
+                         & MatrixSplit == "Divided" 
+                         & MatrixFec == "Yes" 
+                         & MatrixTreatment == "Unmanipulated"
+                         & AnnualPeriodicity == "1"
+                         & SurvivalIssue<=1
+))
+
+
+###stick them together
+combined_data <- rbind(pooled_Metadata, mean_Metadata)
+
+###pull out the matching rows
+keep_first <- as.numeric(rownames(combined_data))
+
+##use these rows to pull out the matrices
+combMat <- comadre$mat[keep_first]
+
+#and associated matrix Class data
+combmatrixClass <- comadre$matrixClass[keep_first]
+
+##and set up a vector of the species
+species_list <- data.frame(species =(combined_data$SpeciesAccepted), 
+                           class = (combined_data$Class), 
+                           phyla = (combined_data$Phylum))
+
+#pull out the unique species
+species_list_u <- unique(species_list$species)
+```
+
+Now check all matrices for egordicity, primativity and irriducablity using the
+popdemo package. This will give us a list of clean species to use.
+
+```{r check ergodicity, message=FALSE, warning=FALSE}
+
+is_ergodic <- vector()
+is_primitive <- vector()
+is_irreducible <- vector()
+
+all_true <- vector()
+
+for(i in 1:length(keep_first)){
+  tryCatch({
+    is_ergodic[i] <- isErgodic(combMat[[i]]$matA)
+    is_primitive[i] <- isPrimitive(combMat[[i]]$matA)
+    is_irreducible[i] <- isIrreducible(combMat[[i]]$matA)
+
+      }, error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
+  all_true[i] <- all(c(is_ergodic[i],is_primitive[i],is_irreducible[i]) == TRUE)
+} 
+
+test.frame <- data.frame(is_ergodic,is_primitive,is_irreducible)
+keep <- which(all_true == TRUE)
+
+discard_species <- which(all_true == FALSE)
+discard_species_names  <- unique(combined_data[discard_species,]$SpeciesAccepted)
+
+clean_species <- combined_data[keep,]$SpeciesAccepted
+
+```
+
+
+Now to calulate each of the metrics. First lets get some info on all the matrices we are using.
+
+```{r species, population and taxa}
+
+##loop through keep whaich are all the matces that passed the above tests.
+##species names
+species_ind_full <- vector()
+##taxa name
+taxa_name <- vector()
+##population_name
+pop_mat_name <- vector()
+###name of the first stage in the matrix
+first_stage <- vector() 
+##matrix dimesnion
+matrix_size <- vector()
+
+  
+for(i in 1:length(keep)){
+  
+##species names
+species_ind_full[i] <-  combined_data[keep[i],]$SpeciesAccepted
+
+##taxa name
+taxa_name[i] <- as.vector(combined_data[keep[i],]$Class)
+
+##population_name
+pop_mat_name[i] <- combined_data[keep[i],]$MatrixPopulation
+
+###name of the first stage in the matrix
+first_stage[i] <- as.vector(combmatrixClass[keep[i]][[1]][1,2])
+    
+##matrix dimesnion
+matrix_size[i] <- dim(combMat[[keep[i]]]$matA)[1]
+
+}
+
+first_stage <- unlist(first_stage)
+```
+
+Now lets calulate when only 5% and 1% are alive as a cutoff criteria, QSD and age at forst reporduction
+
+```{r age at first reporduction}
+
+
+##Age at first reproduction
+life_time_La <- vector()
+
+for(i in 1:length(keep)){
+  tryCatch({
+ 
+    ##### age at first reproduction
+    life_time_La[i] <-	lifeTimeRepEvents(matU =   combMat[[keep[i]]]$matU, 
+                                          matF =  combMat[[keep[i]]]$matF,
+                                          startLife = 1)$La
+    
+    },error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
+}
+```
+    
+Now lets calulate the age when 95% an 99% of the mature population is alive
+```{r %alive}
+
+##age (year) when 99% of chohort are dead
+surv_99 <- vector()
+##age (year) when 95% of chohort are dead
+surv_95 <- vector()
+#a resonable minimum maximum which is the hist of matrix size, 99% survival or QSD
+min_max <- vector() 
+
+for(i in 1:length(keep)){
+  tryCatch({
+
+    
+    ##### age when 95% are dead
+    surv_95[i] <- exceptionalLife(combMat[[keep[i]]]$matU, startLife = 1)[1]
+    
+    ##### age when 99% are dead
+    
+    surv_99[i] <- which((makeLifeTable(
+                    matU = combMat[[keep[i]]]$matU, 
+                    matF =  combMat[[keep[i]]]$matF, 
+                    matC =  combMat[[keep[i]]]$matC, 
+              startLife = 1, nSteps = 1000)$lx*1000) < 0.01)[1]
+    
+
+  # min_max[i] <- max(surv_99[i],matrix_size[i])
+  min_max[i] <- surv_99[i] - 1
+    
+    },error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
+}
+
+```
+
+
+
+No let calulate some lifetables
+```{r lifetables}
+
+###life table
+lxmx_curve <- list()
+
+for(i in 1:length(keep)){
+  tryCatch({
+
+    ####calulculate the lxmx curve
+    #I use max lifespan as the cut off point
+    lxmx_curve[[i]] <-  makeLifeTable(matU =  combMat[[keep[i]]]$matU, 
+                                 matF =  combMat[[keep[i]]]$matF, 
+                                 matC =  combMat[[keep[i]]]$matC, 
+                                 startLife = 1, nSteps = min_max[i])
+  
+  },error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
+}   
+```
+
+
+k_entrpy and AUC
+```{r mean_life_expect}
+k_ent_rage <- vector()
+AUC_rage <- vector()
+
+k_ent_norm <- vector()
+AUC_norm <- vector()
+
+for(i in 1:length(keep)){
+  tryCatch({	
+    ##### mean life expectancy
+    k_ent_rage[i] <-	entropy_k(lxmx_curve[[i]]$lx, trapeze = FALSE)
+    
+    AUC_rage[i] <-	shape_surv(lxmx_curve[[i]]$lx)
+    
+    k_ent_norm[i] <- kentropy_spline(lx = lxmx_curve[[i]]$lx, 
+                                 x = lxmx_curve[[i]]$x,
+                                 all.knots = TRUE,
+                                 bins = 10)[1]
+    
+   AUC_norm[i] <- kentropy_spline(lx = lxmx_curve[[i]]$lx, 
+                                 x = lxmx_curve[[i]]$x,
+                                 all.knots = TRUE,
+                                 bins = 10)[3]
+
+     
+        },error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
+}   
+
+```
+
+
+Mean life expectancy
+```{r mean_life_expect}
+mean_life_expect <- vector()
+for(i in 1:length(keep)){
+  tryCatch({	
+    ##### mean life expectancy
+    mean_life_expect[i] <-	meanLifeExpectancy(matU = combMat[[keep[i]]]$matU, 
+                                              startLife= 1)
+     
+        },error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
+}   
+
+```
+
+
+Life expectancy conditional on reaching sexual maturity
+```{r M_rep_lif_exp}
+M_rep_lif_exp <- vector()
+for(i in 1:length(keep)){
+  tryCatch({	
+ 
+  ##life expectancy conditional on reaching reporduction
+    M_rep_lif_exp[i] <- lifeTimeRepEvents(matU =  combMat[[keep[i]]]$matU, 
+                                          matF =  combMat[[keep[i]]]$matF,
+                                          startLife = 1)$meanRepLifeExpectancy
+     
+        },error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
+}   
+
+```
+
+
+
+standard diviation of survival
+```{r Gini}
+
+
+sbins <- 100
+
+surv_sd <- vector()
+surv_mean <- vector()
+
+surv_sd_early <- vector()
+surv_mean_early <- vector()
+
+surv_sd_mature <- vector()
+surv_mean_mature <- vector()
+surv_early_sum <- vector()
+
+prob_d_sd <- vector()
+prob_d_sd_early <- vector()
+prob_d_sd_mature <- vector()
+
+fx_curve <- list()
+
+prob_death <- list()
+
+La_sbins <- vector()
+
+spline_curve <- list()
+##age at which 10% of the population are alive
+
+
+##age at which 90% of the population are alive
+
+
+##calulate f(x) age at death
+for(i in 1:length(keep)){
+  tryCatch({	
+  
+    
+  spline_curve[[i]] <-  unlist(lx_spline(lxmx_curve[[i]]$lx, lxmx_curve[[i]]$x, bins = sbins)[1])
+    
+      La_sbins[i] <- round((life_time_La[i]/length(lxmx_curve[[i]]$lx))*sbins)
+
+  
+  
+      for(z in 1:c(length(spline_curve[[i]])-1)){
+    
+    if(z == 1){fx_curve[i][1] <- 1 - c(spline_curve[[i]][z+1])}
+
+    else{ fx_curve[[i]][z] <- c(spline_curve[[i]][z]) - spline_curve[[i]][z+1]
+    
+  }
+      }
+    
+    
+       for(z in 1:c(length(spline_curve[[i]])-1)){
+    
+    if(z == 1){prob_death[i][1] <- 1 - c(spline_curve[[i]][z+1])}
+
+    else{ prob_death[[i]][z] <- 1 - c(spline_curve[[i]][z+1])/spline_curve[[i]][z]
+    
+  }
+    }
+    
+    
+      
+       surv_sd[i] <- sd(fx_curve[[i]], na.rm = TRUE)
+       prob_d_sd[i] <- sd(prob_death[[i]], na.rm = TRUE)
+
+       surv_sd_early[i] <- sd(fx_curve[[i]][1:c(La_sbins[i]+1)], na.rm = TRUE)
+       surv_sd_mature[i] <- sd(fx_curve[[i]][c(La_sbins[i]):c(length(fx_curve[[i]]))], na.rm = TRUE)
+       
+       prob_d_sd_early[i] <- sd(fx_curve[[i]][1:c(La_sbins[i]+1)], na.rm = TRUE)
+       prob_d_sd_mature[i] <- sd(fx_curve[[i]][c(La_sbins[i]):c(length(fx_curve[[i]]))], na.rm = TRUE)
+       
+       
+       
+       surv_early_sum[i] <- 1 - lxmx_curve[[i]]$lx[La_sbins[i]+1]
+       
+       surv_sd_early[i] <- sd(fx_curve[[i]][1:c(La_sbins[i]+1)], na.rm = TRUE)
+
+       
+       surv_mean[i] <- mean(fx_curve[[i]], na.rm = TRUE)
+       surv_mean_early[i] <- mean(fx_curve[[i]][1:c(La_sbins[i])], na.rm = TRUE)
+       surv_mean_mature[i] <- mean(fx_curve[[i]][c(La_sbins[i]):c(length(fx_curve[[i]]))], na.rm = TRUE)
+   
+    
+        },error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
+}   
+
+```
+
+
+
+
+And put them all into a table
+```{r table}
+###some errors here could be cleaned up
+
+mean_max_life <- mean_life_expect/surv_95
+
+ind_vital <- data.frame(species_ind_full,
+                        taxa_name,
+                        pop_mat_name,
+                        mean_life_expect,
+                        mean_max_life,
+                        life_time_La,
+                        first_stage,
+                        k_ent_rage,
+                        AUC_rage,
+                        k_ent_norm,
+                        AUC_norm,
+                        matrix_size
+                        )
+
+```
+
+Now just remove the sub_species part of the names
+```{r calulation of metrics at population level}
+
+ind_vital[,"species_ind_full"]  <- gsub(" subsp.*","", ind_vital[,"species_ind_full"])
+ind_vital[,"species_ind_full"]  <- gsub(" ","_", ind_vital[,"species_ind_full"])
+
+```
+
+Next we add in the external infor such as habitat etc.
+
+```{r  trophic data}
+##trophic data
+mass_g <- vector()
+repo_size_g <- vector()
+par_care <- vector()
+viv <- vector()
+
+for(k in 1:(length(ind_vital$species_ind_full))){
+  tryCatch({	
+
+      mass_g[k] <-   (na.omit(trophic_data[trophic_data$species  == as.vector(ind_vital[k,"species_ind_full"]),"mass_g"]))[1]
+      
+            repo_size_g[k] <-   (na.omit(trophic_data[trophic_data$species  == as.vector(ind_vital[k,"species_ind_full"]),"repo_size_g"]))[1]
+            
+           
+           par_care[k] <-   (na.omit(trophic_data[trophic_data$species  == as.vector(ind_vital[k,"species_ind_full"]),"parental_care"]))[1]
+
+
+           viv[k] <-   (na.omit(trophic_data[trophic_data$species  == as.vector(ind_vital[k,"species_ind_full"]),"repo_type"]))[1]
+
+
+
+      
+      },error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
+}
+
+
+```
+
+
+Stick them all together
+```{r  trophic and pop data}
+
+pop_vital <- data.frame(ind_vital,                       
+                        mass_g,
+                        repo_size_g,
+                        par_care,
+                        viv
+                         )
+
+```
+
+
+
+
+
+Let also add some human demography from other sources external to COMADRE
+```{r human data}
+#load("PPMs Eusrostat 100x100.Rdata")
+load("keyfitz_Agam_100x100.Rdata")
+```
+
+
+lets just calulate the whole lot together
+```{r human metric}
+
+#Spline bins
+
+sbins <- 10
+
+##I need to come up with a better breack down for these
+#lets calculate for Ireland
+Irish_rows_1960 <- as.numeric(rownames(keyfitz$countryyear[keyfitz$countryyear$country == "Ireland" & keyfitz$countryyear$year > 1960,]))
+Irish_rows_1920 <- as.numeric(rownames(keyfitz$countryyear[keyfitz$countryyear$country == "Ireland" & keyfitz$countryyear$year < 1960,]))
+
+#lets calculate for Sweden as Finland didnt work
+Sweden_rows_a60 <- as.numeric(rownames(keyfitz$countryyear[keyfitz$countryyear$country == "Sweden" & keyfitz$countryyear$year > 1960,]))
+Sweden_rows_1850_19 <- as.numeric(rownames(keyfitz$countryyear[keyfitz$countryyear$country == "Sweden" & keyfitz$countryyear$year > 1850 & keyfitz$countryyear$year < 1901,]))
+
+#lets calculate for Japan
+Japan_rows_b60 <- as.numeric(rownames(keyfitz$countryyear[keyfitz$countryyear$country == "Japan" & keyfitz$countryyear$year < 1960,]))
+Japan_rows_a60 <- as.numeric(rownames(keyfitz$countryyear[keyfitz$countryyear$country == "Japan" & keyfitz$countryyear$year > 1960,]))
+
+
+Irish_rows<- as.numeric(rownames(keyfitz$countryyear[keyfitz$countryyear$country == "Ireland",]))
+
+##average the pops
+Irish_mat_1960 <- keyfitz$Agam100[Irish_rows_1960]
+Irish_mat_1920 <- keyfitz$Agam100[Irish_rows_1920]
+Sweden_rows_1850_19 <- keyfitz$Agam100[Sweden_rows_1850_19]
+Sweden_rows_a60 <- keyfitz$Agam100[Sweden_rows_a60]
+japan_mat_b60 <- keyfitz$Agam100[Japan_rows_b60]
+japan_mat_a60 <- keyfitz$Agam100[Japan_rows_a60]
+
+Irish_1960 <- meanMatrix(Irish_mat_1960)
+Irish_1920 <- meanMatrix(Irish_mat_1920)
+Sweden_1850_19 <- meanMatrix(Sweden_rows_1850_19)
+Sweden_a60 <- meanMatrix(Sweden_rows_a60)
+japan_b60 <- meanMatrix(japan_mat_b60)
+japan_a60 <- meanMatrix(japan_mat_a60)
+
+
+##you need to put this in the right order
+human_pop <- c("Homo_Irish1920" , "Homo_Irish1960", "Sweden_1850_19","Sweden_a60", "japan_b60", "japan_a60")
+human_mats <- list(Irish_1920, Irish_1960, Sweden_1850_19, Sweden_a60, japan_b60, japan_a60)
+
+##pop names and year
+pop_country_year <- vector()
+##mean life expectancy
+h_mean_life_expect <- vector()
+##age (year) when 99% of chohort are dead
+h_surv_99 <- vector()
+##age (year) when 95% of chohort are dead
+h_surv_95 <- vector()
+##life expectancy contingent on entering reproduction
+h_M_rep_lif_exp <- vector()
+##Age at first reproduction
+h_life_time_La <- vector()
+#generation time
+h_gen_time <- vector()
+##mean reporductive rate raw
+h_mean_repo_rate <- vector()
+##mean reporductive rate
+h_mean_repo_rate_stable_state <- vector()
+##time to quase stable distribution (how long does it take for the distrbution to stabalise on the Stable state distibution)
+h_QSD <- vector()
+#matrix dimension size
+h_matrix_size <- vector()
+h_gini <- vector()
+h_mxlx_mean <- vector()
+h_mxlxsd <- vector()
+h_mxlxsd_prop <- vector()
+h_mxlx_prop <- list()
+h_mx_mean <- vector()
+h_mxsd <- vector()
+h_surv_sd <- vector()
+h_surv_sd_early <- vector()
+h_surv_sd_mature <- vector()
+h_surv_mean <- vector()
+h_surv_mean_early <- vector()
+h_surv_mean_mature <- vector()
+
+h_surv_early_sum <- vector()
+
+fx_h_curve <- list()
+
+h_lxmx_curve_list <- list()
+h_spline_curve <- list()
+
+
+h_k_ent_rage <- vector()
+h_AUC_rage <- vector()
+
+h_k_ent_norm <- vector()
+h_AUC_norm <- vector()
+
+
+##convert the age of maturity to the right point on the spline sampled curve
+La_h_sbins <- vector()
+
+
+
+for(i in 1:length(human_mats)){
+  tryCatch({
+    
+###we first need to decompose the A matri into U F and C
+    A_hum <-  human_mats[[i]]
+    U_hum <- A_hum
+    U_hum[1,] <- 0
+    F_hum <- matrix(0,dim(A_hum)[1],dim(A_hum)[1])
+    F_hum[1,] <- A_hum[1,]
+    C_hum <- matrix(0,dim(A_hum)[1],dim(A_hum)[1])
+    
+    
+    ##country and year
+    pop_country_year[i] <- human_pop[i]
+
+    ##matrix dimesnion
+    h_matrix_size[i] <- dim(A_hum)[1]
+    
+    ### quasi-convergence for lx and mx 
+    h_QSD[i] <- qsdConverge(U_hum, conv = 0.05, startLife = 1, 
+                           nSteps = 10000)
+     
+    ##### mean life expectancy
+    h_mean_life_expect[i] <-	meanLifeExpectancy(matU = U_hum, 
+                                              startLife= 1)
+    ##### age when 95% are dead
+    h_surv_95[i] <- exceptionalLife(U_hum, startLife=1)[1]
+    ##### age when 99% are dead
+    h_surv_99[i] <- which(log10(makeLifeTable(
+                    matU =  U_hum, 
+                    matF =  F_hum, 
+                    matC =  C_hum, 
+              startLife = 1, nSteps = 1000)$lx*1000) < 0)[2]
+    
+    ##### time to first reproduction
+    h_life_time_La[i] <-	lifeTimeRepEvents(matU = U_hum, 
+                                          matF = F_hum,
+                                          startLife = 1)$La
+    
+    ##life expectancy conditional on reaching reporduction
+    h_M_rep_lif_exp[i] <- lifeTimeRepEvents(matU =  U_hum, 
+                                          matF =  F_hum,
+                                          startLife = 1)$meanRepLifeExpectancy
+      
+
+    ##### generation time from popbio package
+    h_gen_time[i]  <- generation.time(A =  A_hum)
+    
+    ### mean reporduction rate
+    h_mean_repo_rate_stable_state[i] <- meanRepo(matA = A_hum, 
+                                                 matF = F_hum)
+    
+    h_mean_repo_rate[i] <- mean(F_hum[1,])
+    
+  
+    
+    ####calulculate the lxmx curve
+    #I use max lifespan as the cut off point
+    h_lxmx_curve <-  makeLifeTable(matU =  U_hum, 
+                                 matF =  F_hum, 
+                                 matC =  C_hum, 
+                                 startLife = 1,
+                                 nSteps = h_surv_99[i])
+    
+  
+    
+    La_h_sbins[i] <- round((h_life_time_La[i]/h_surv_99[i])*sbins)
+    
+    h_lxmx_curve_mature <-  makeLifeTable(matU =  U_hum, 
+                                 matF =  F_hum, 
+                                 matC =  C_hum, 
+                                 startLife = h_life_time_La[i],
+                                 nSteps = h_surv_99[i])
+    
+
+    h_gini[i] <- Gini(h_lxmx_curve$lx*h_lxmx_curve$mx)
+
+  
+  
+    h_k_ent_rage[i] <-	entropy_k(h_lxmx_curve$lx, trapeze = FALSE)
+    
+    h_AUC_rage[i] <-	shape_surv(h_lxmx_curve$lx)
+
+    h_surv_sd[i] <- sd(h_lxmx_curve$lx)
+    
+    h_k_ent_norm[i] <-  kentropy_spline(lx = h_lxmx_curve$lx, 
+                                 x = h_lxmx_curve$x,
+                                 all.knots = TRUE,
+                                 bins = 10)[1]
+
+    h_AUC_norm[i] <-  kentropy_spline(lx = h_lxmx_curve$lx, 
+                                 x = h_lxmx_curve$x,
+                                 all.knots = TRUE,
+                                 bins = 10)[3]
+      
+
+    
+    },error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
+}   
+
+
+###some errors here could be cleaned up
+h_ind_vital <- data.frame(                        
+                        pop_country_year,
+                        h_mean_life_expect,
+                        h_life_time_La,
+                        h_mean_repo_rate_stable_state,
+                        h_mean_repo_rate,
+                        h_gen_time,
+                        h_gini,
+                        h_M_rep_lif_exp,
+                        h_matrix_size,
+                        h_surv_95,
+                        h_surv_99,
+                        h_surv_sd,
+                        h_k_ent_rage,
+                        h_AUC_rage
+                       )
+    
+```
+
+
+```{r animal huma combine}
+
+
+human_dem <- data.frame(species_ind_full = rep("Homo_sapiens", length(human_pop)), 
+                        taxa_name =  rep("Mammalia" ,length(pop_country_year)),
+                        pop_mat_name = pop_country_year,
+                        mean_life_expect = h_mean_life_expect,
+                        mean_max_life = c(h_mean_life_expect/h_surv_95),
+                        life_time_La = h_life_time_La,
+                        first_stage = rep("baby", length(human_pop)),
+                        #surv_sd = h_surv_sd,
+                        k_ent_rage = h_k_ent_rage,
+                        AUC_rage = h_AUC_rage,
+                        k_ent_norm = h_k_ent_norm,
+                        AUC_norm = h_AUC_norm,
+                        matrix_size = h_matrix_size,
+                        mass_g =  rep(trophic_data[trophic_data$species  == "Homo_sapiens","mass_g"],length(pop_country_year)),
+                        repo_size_g = rep(trophic_data[trophic_data$species  == "Homo_sapiens","repo_size_g"],length(pop_country_year)),
+                        par_care = rep(trophic_data[trophic_data$species  == "Homo_sapiens","parental_care"],length(pop_country_year)),
+                        viv = rep(trophic_data[trophic_data$species  == "Homo_sapiens","repo_type"],length(pop_country_year))
+                        )
+
+full_m_data <- rbind(pop_vital,
+                     human_dem)
+
+#add mass specific 
+
+full_m_data <- cbind(full_m_data, 
+                     repo_mas_sp = full_m_data$repo_size_g/full_m_data$mass_g)
+
+```
+
+
+Now we can clean the data before expoting it
+
+
+Remove biologically crazy species
+
+```{r remove biologically crazy species}
+
+pop_data <- full_m_data
+
+####remonve these problem species as they clearly have a problem
+##Spratt have lifesspans >100 which clearly way off any sensible biology
+pop_data_sr <- pop_data[pop_data$species != "Sprattus_sprattus",]
+
+##This stupid monkey thinks it can live for >105
+pop_data_sr2 <- pop_data_sr[pop_data_sr$species != "Brachyteles_hypoxanthus",]
+
+##Scolytus_ventralis is coded in as annual but its clearyl a seasonal species
+pop_data_sr3 <- pop_data_sr2[pop_data_sr2$species != "Scolytus_ventralis",]
+
+####remove Enhydra_lutris its a simulation based study
+##This gives an Na at hte moment, check at the end to see if it still does, in which case remove this line
+pop_data_sr4 <- pop_data_sr3[pop_data_sr3$species != "Enhydra_lutris",]
+
+pop_data_sr5 <- pop_data_sr4[pop_data_sr4$species != "Somateria_mollissima",]
+
+
+####remove Chrysemys_picta as the fecundity is higher than the max reporduction in the paper
+pop_data_sr6 <- pop_data_sr5[pop_data_sr5$species != "Chrysemys_picta",]
+pop_data_sr7 <- pop_data_sr6[pop_data_sr6$species != "Crocodylus_johnsoni",]
+#pop_data_sr8 <- pop_data_sr7[pop_data_sr7$species != "Amphimedon_compressa",]
+
+
+
+###remove Mya_arenaria and Haliotis_laevigata as they have net repoductie rates of > 100
+#full_nl_data <- full_nl_data[full_nl_data$species != "Amphimedon_compressa",]
+#full_nl_data <- full_nl_data[full_nl_data$species != "Haliotis_laevigata",]
+
+##remove the population colunm
+drops <- c("pop_mat_name")
+pop_data_nopop <- pop_data_sr7[,!(names(pop_data_sr7) %in% drops)]
+
+#rename the species_ind_full col name to "species"
+colnames(pop_data_nopop)[1] <- "species"
+```
+
+
+Now remove any infs of Na's in the pop metrics
+```{r remove rows with inf or NAs}
+
+##remove infinaties
+pop_data_infr  <- do.call(data.frame,lapply(pop_data_nopop, function(x) replace(x, is.infinite(x),NA)))
+
+full_infna_data <- na.omit(pop_data_infr)
+```
+
+```{r prun the tree down the remaining species}
+
+##add a colume to idenfy pgls match up
+phylo_match_data <- data.frame(full_infna_data, animal = full_infna_data$species)
+
+pgls_unique_matched <- data.frame(species = unique(phylo_match_data$species), 
+                                  species_pgls = unique(phylo_match_data$animal))
+
+
+axis_trees <- list()
+for(i in 1:(length(com_tree))){
+tree_ren <- com_tree[[i]]
+
+#tree match
+axis_comp<- comparative.data(phy = tree_ren, 
+                             data = pgls_unique_matched, 
+                             names.col = "species_pgls" , force.root = TRUE)
+axis_trees[[i]] <- axis_comp$phy
+}
+
+
+
+#small fix on ultrametric problem
+is_ultra <- vector()
+for(i in 1:length(axis_trees)) { 
+  is_ultra[i] <- is.ultrametric(axis_trees[[i]])
+  }
+
+ultra_row <- which(is_ultra ==TRUE)
+
+axis_trees <- axis_trees[ultra_row]
+
+class(axis_trees) <- "multiPhylo"
+
+
+
+axis_comp$dropped$unmatched.rows
+```
+
+First we make a multree object so we can loop each of the models through the trees
+```{r mulTree}
+pop_multree <- as.mulTree(data = phylo_match_data, tree = axis_trees, taxa = "animal", rand.terms = ~animal + species)
+
+```
+
+Now lets set a prior
+```{r MCMC prior}
+
+prior<-list(R = list(V = 1/2, nu=0.002), 
+            G = list(G1=list(V = 1/2,n = 1, alpha.mu=rep(0,1), alpha.V= diag(1)*10^3), 
+                     G1=list(V = 1/2,n = 1, alpha.mu=rep(0,1), alpha.V= diag(1)*10^3)))
+
+```
+
+and general parameters
+```{r MCMC parameters}
+
+#parameters <- c(1100000, 500, 100000)
+parameters <- c(110000, 50, 10000)
+
+```
+
+
+
+#AUC_rage
+
+```{r AUC_rage mulTree run}
+formula_AUC_rage <- AUC_rage ~ par_care
+
+mulTree(mulTree.data = pop_multree,
+        formula = formula_AUC_rage,
+        priors = prior,
+        parameters = parameters,
+        output = "AUC_rage_run",
+        ESS = 1000,
+        chains = 2)
+```
+
+
+All the diagnostices look good, lets read that back in.
+```{r AUC_rage readback run}
+AUC_rage_models <- read.mulTree("AUC_rage_run")
+summary(AUC_rage_models)
+```
+
+life_shape_models variance terms
+
+```{r AUC_rage var}
+AUC_rage_var <- read.mulTree("AUC_rage_run", extract = "VCV")
+
+AUC_rage_phlyo <- list()
+AUC_rage_spec <- list()
+AUC_rage_unit <- list()
+
+for(i in 1:length(names(AUC_rage_var))){
+
+  AUC_rage_phlyo[[i]] <-  AUC_rage_var[[1]][,1] 
+  AUC_rage_spec[[i]] <-  AUC_rage_var[[1]][,2] 
+  AUC_rage_unit[[i]] <-  AUC_rage_var[[1]][,3] 
+  }
+
+AUC_rage_phlyo <- unlist(AUC_rage_phlyo)
+AUC_rage_spec <- unlist(AUC_rage_spec)
+AUC_rage_unit <- unlist(AUC_rage_unit)
+
+AUC_rage_prop_phlyo <- AUC_rage_phlyo/(AUC_rage_phlyo + AUC_rage_spec + AUC_rage_unit)
+AUC_rage_prop_spec  <- AUC_rage_spec/(AUC_rage_phlyo + AUC_rage_spec + AUC_rage_unit)
+AUC_rage_prop_residual  <- AUC_rage_unit/(AUC_rage_phlyo + AUC_rage_spec + AUC_rage_unit)
+
+hdr(AUC_rage_prop_phlyo)
+hdr(AUC_rage_prop_spec)
+hdr(AUC_rage_prop_residual)
+
+```
+
+
+```{r AUC_rage plot}
+
+##Allometric scaling
+#pdf("scaling_bar_plots.pdf")
+AUC_rage_list <- list(AUC_rage_prop_residual,
+                      AUC_rage_prop_phlyo,
+                      AUC_rage_prop_spec,
+                      AUC_rage_models$par_careyes,
+                      AUC_rage_models$`(Intercept)`
+                      )
+
+
+MultiDisPlot(AUC_rage_list)
+abline(v = 0,
+       lty = 3)
+
+#dev.off()
+
+
+```
+
+
+
+
+#k_ent_rage
+
+```{r k_ent_rage mulTree run}
+formula_k_ent_rage <- k_ent_rage ~ par_care
+
+mulTree(mulTree.data = pop_multree,
+        formula = formula_k_ent_rage,
+        priors = prior,
+        parameters = parameters,
+        output = "k_ent_rage_run",
+        ESS = 1000,
+        chains = 2)
+```
+
+
+All the diagnostices look good, lets read that back in.
+```{r k_ent_rage readback run}
+k_ent_rage_models <- read.mulTree("k_ent_rage_run")
+summary(k_ent_rage_models)
+```
+
+life_shape_models variance terms
+
+```{r k_ent_rage var}
+k_ent_rage_var <- read.mulTree("k_ent_rage_run", extract = "VCV")
+
+k_ent_rage_phlyo <- list()
+k_ent_rage_spec <- list()
+k_ent_rage_unit <- list()
+
+for(i in 1:length(names(k_ent_rage_var))){
+
+  k_ent_rage_phlyo[[i]] <-  k_ent_rage_var[[1]][,1] 
+  k_ent_rage_spec[[i]] <-  k_ent_rage_var[[1]][,2] 
+  k_ent_rage_unit[[i]] <-  k_ent_rage_var[[1]][,3] 
+  }
+
+k_ent_rage_phlyo <- unlist(k_ent_rage_phlyo)
+k_ent_rage_spec <- unlist(k_ent_rage_spec)
+k_ent_rage_unit <- unlist(k_ent_rage_unit)
+
+k_ent_rage_prop_phlyo <- k_ent_rage_phlyo/(k_ent_rage_phlyo + k_ent_rage_spec + k_ent_rage_unit)
+k_ent_rage_prop_spec  <- k_ent_rage_spec/(k_ent_rage_phlyo + k_ent_rage_spec + k_ent_rage_unit)
+k_ent_rage_prop_residual  <- k_ent_rage_unit/(k_ent_rage_phlyo + k_ent_rage_spec + k_ent_rage_unit)
+
+hdr(k_ent_rage_prop_phlyo)
+hdr(k_ent_rage_prop_spec)
+hdr(k_ent_rage_prop_residual)
+
+```
+
+
+```{r k_ent_rage plot}
+
+##Allometric scaling
+#pdf("scaling_bar_plots.pdf")
+k_ent_rage_list <- list(k_ent_rage_prop_residual,
+                      k_ent_rage_prop_phlyo,
+                      k_ent_rage_prop_spec,
+                      k_ent_rage_models$par_careyes,
+                      k_ent_rage_models$`(Intercept)`
+                      )
+
+
+MultiDisPlot(k_ent_rage_list)
+abline(v = 0,
+       lty = 3)
+
+#dev.off()
+
+
+```
+
+
+#mean_max_life
+
+```{r mean_max_life mulTree run}
+formula_mean_max_life <- mean_max_life ~ par_care
+
+mulTree(mulTree.data = pop_multree,
+        formula = formula_mean_max_life,
+        priors = prior,
+        parameters = parameters,
+        output = "mean_max_life_run",
+        ESS = 1000,
+        chains = 2)
+```
+
+
+All the diagnostices look good, lets read that back in.
+```{r mean_max_life readback run}
+mean_max_life_models <- read.mulTree("mean_max_life_run")
+summary(mean_max_life_models)
+```
+
+life_shape_models variance terms
+
+```{r mean_max_life var}
+mean_max_life_var <- read.mulTree("mean_max_life_run", extract = "VCV")
+
+mean_max_life_phlyo <- list()
+mean_max_life_spec <- list()
+mean_max_life_unit <- list()
+
+for(i in 1:length(names(mean_max_life_var))){
+
+  mean_max_life_phlyo[[i]] <-  mean_max_life_var[[1]][,1] 
+  mean_max_life_spec[[i]] <-  mean_max_life_var[[1]][,2] 
+  mean_max_life_unit[[i]] <-  mean_max_life_var[[1]][,3] 
+  }
+
+mean_max_life_phlyo <- unlist(mean_max_life_phlyo)
+mean_max_life_spec <- unlist(mean_max_life_spec)
+mean_max_life_unit <- unlist(mean_max_life_unit)
+
+mean_max_life_phlyo_prop <- mean_max_life_phlyo/(mean_max_life_phlyo + mean_max_life_spec + mean_max_life_unit)
+mean_max_life_spec_prop  <- mean_max_life_spec/(mean_max_life_phlyo + mean_max_life_spec + mean_max_life_unit)
+mean_max_life_residual_prop  <- mean_max_life_unit/(mean_max_life_phlyo + mean_max_life_spec + mean_max_life_unit)
+
+hdr(mean_max_life_phlyo_prop)
+hdr(mean_max_life_spec_prop)
+hdr(mean_max_life_residual_prop)
+
+```
+
+
+
+#AUC_norm
+
+```{r AUC_norm mulTree run}
+formula_AUC_norm <- AUC_norm ~ par_care
+
+mulTree(mulTree.data = pop_multree,
+        formula = formula_AUC_norm,
+        priors = prior,
+        parameters = parameters,
+        output = "AUC_norm_run",
+        ESS = 1000,
+        chains = 2)
+```
+
+
+All the diagnostices look good, lets read that back in.
+```{r AUC_norm readback run}
+AUC_norm_models <- read.mulTree("AUC_norm_run")
+summary(AUC_norm_models)
+```
+
+AUC_norm variance terms
+
+```{r AUC_norm var}
+AUC_norm_var <- read.mulTree("AUC_norm_run", extract = "VCV")
+
+AUC_norm_phlyo <- list()
+AUC_norm_spec <- list()
+AUC_norm_unit <- list()
+
+for(i in 1:length(names(AUC_norm_var))){
+
+  AUC_norm_phlyo[[i]] <-  AUC_norm_var[[1]][,1] 
+  AUC_norm_spec[[i]] <-  AUC_norm_var[[1]][,2] 
+  AUC_norm_unit[[i]] <-  AUC_norm_var[[1]][,3] 
+  }
+
+AUC_norm_phlyo <- unlist(AUC_norm_phlyo)
+AUC_norm_spec <- unlist(AUC_norm_spec)
+AUC_norm_unit <- unlist(AUC_norm_unit)
+
+AUC_norm_phlyo_prop <- AUC_norm_phlyo/(AUC_norm_phlyo + AUC_norm_spec + AUC_norm_unit)
+AUC_norm_spec_prop  <- AUC_norm_spec/(AUC_norm_phlyo + AUC_norm_spec + AUC_norm_unit)
+AUC_norm_residual_prop  <- AUC_norm_unit/(AUC_norm_phlyo + AUC_norm_spec + AUC_norm_unit)
+
+hdr(AUC_norm_phlyo_prop)
+hdr(AUC_norm_spec_prop)
+hdr(AUC_norm_residual_prop)
+
+```
+
+
+
+#k_ent_norm
+
+```{r k_ent_norm mulTree run}
+formula_k_ent_norm <- k_ent_norm ~ par_care
+
+mulTree(mulTree.data = pop_multree,
+        formula = formula_k_ent_norm,
+        priors = prior,
+        parameters = parameters,
+        output = "k_ent_norm_run",
+        ESS = 1000,
+        chains = 2)
+```
+
+
+All the diagnostices look good, lets read that back in.
+```{r AUC_norm readback run}
+k_ent_norm_models <- read.mulTree("k_ent_norm_run")
+summary(k_ent_norm_models)
+```
+
+k_ent_norm variance terms
+
+```{r AUC_norm var}
+k_ent_norm_var <- read.mulTree("k_ent_norm_run", extract = "VCV")
+
+k_ent_norm_phlyo <- list()
+k_ent_norm_spec <- list()
+k_ent_norm_unit <- list()
+
+for(i in 1:length(names(k_ent_norm_var))){
+
+  k_ent_norm_phlyo[[i]] <-  k_ent_norm_var[[1]][,1] 
+  k_ent_norm_spec[[i]] <-  k_ent_norm_var[[1]][,2] 
+  k_ent_norm_unit[[i]] <-  k_ent_norm_var[[1]][,3] 
+  }
+
+k_ent_norm_phlyo <- unlist(k_ent_norm_phlyo)
+k_ent_norm_spec <- unlist(k_ent_norm_spec)
+k_ent_norm_unit <- unlist(k_ent_norm_unit)
+
+k_ent_norm_prop_phlyo <- k_ent_norm_phlyo/(k_ent_norm_phlyo + k_ent_norm_spec + k_ent_norm_unit)
+k_ent_norm_prop_spec  <- k_ent_norm_spec/(k_ent_norm_phlyo + k_ent_norm_spec + k_ent_norm_unit)
+k_ent_norm_prop_residual  <- k_ent_norm_unit/(k_ent_norm_phlyo + k_ent_norm_spec + k_ent_norm_unit)
+
+hdr(k_ent_norm_prop_phlyo)
+hdr(k_ent_norm_prop_spec)
+hdr(k_ent_norm_prop_residual)
+
+```
+
+
+
+
+##PLots
+```{r plots}
+
+par(mfrow=c(1,2))
+
+plot(pop_multree$data$AUC_rage ~ as.factor(pop_multree$data$par_care),
+     col ="darkgrey",
+     bty = "n",
+     boxwex = 0.05,
+     ylab = "AUC",
+     xlab = "Parental care")
+
+points(pop_multree$data$AUC_rage ~ jitter(as.integer(as.factor(pop_multree$data$par_care)), 
+                                          amount = 0.1),
+       pch = 16,
+       col = rgb(44,137,160, max=255),
+       cex = 0.7)
+
+
+points(pop_multree$data[pop_multree$data$species == "Homo_sapiens", "AUC_rage"] ~ rep(2, length(pop_multree$data[pop_multree$data$species == "Homo_sapiens", "par_care"])) , 
+       pch = 16,
+       col = "red")
+
+points(pop_multree$data[pop_multree$data$species == "Oncorhynchus_tshawytscha", "AUC_rage"] ~ rep(1, length(pop_multree$data[pop_multree$data$species == "Oncorhynchus_tshawytscha", "par_care"])) , 
+       pch = 16,
+       col = "green")
+
+
+
+plot(pop_multree$data$k_ent_rage ~ as.factor(pop_multree$data$par_care),
+     col ="darkgrey",
+     bty = "n",
+     boxwex = 0.05,
+     ylab = "H-entropy",
+     xlab = "Parental care")
+
+points(pop_multree$data$k_ent_rage ~ jitter(as.integer(as.factor(pop_multree$data$par_care)), 
+                                          amount = 0.1),
+       pch = 16,
+       col = rgb(44,137,160, max=255),
+       cex = 0.7)
+
+points(pop_multree$data[pop_multree$data$species == "Oncorhynchus_tshawytscha", "k_ent_rage"] ~ rep(1, length(pop_multree$data[pop_multree$data$species == "Oncorhynchus_tshawytscha", "par_care"])) , 
+       pch = 16,
+       col = "green")
+
+
+points(pop_multree$data[pop_multree$data$species == "Homo_sapiens", "k_ent_rage"] ~ rep(2, length(pop_multree$data[pop_multree$data$species == "Homo_sapiens", "par_care"])) , 
+       pch = 16,
+       col = "red")
+
+```
+
+
+
+
+
+
+##PLots
+```{r plots}
+
+par(mfrow=c(1,2))
+
+plot(pop_multree$data$AUC_norm ~ as.factor(pop_multree$data$par_care),
+     col ="darkgrey",
+     bty = "n",
+     boxwex = 0.05,
+     ylab = "AUC",
+     xlab = "Parental care")
+
+points(pop_multree$data$AUC_norm ~ jitter(as.integer(as.factor(pop_multree$data$par_care)), 
+                                          amount = 0.1),
+       pch = 16,
+       col = rgb(44,137,160, max=255),
+       cex = 0.7)
+
+
+points(pop_multree$data[pop_multree$data$species == "Homo_sapiens", "AUC_norm"] ~ rep(2, length(pop_multree$data[pop_multree$data$species == "Homo_sapiens", "par_care"])) , 
+       pch = 16,
+       col = "red")
+
+points(pop_multree$data[pop_multree$data$species == "Chelydra_serpentina", "AUC_norm"] ~ rep(1, length(pop_multree$data[pop_multree$data$species == "Chelydra_serpentina", "par_care"])) , 
+       pch = 16,
+       col = "green")
+
+
+
+plot(pop_multree$data$k_ent_norm ~ as.factor(pop_multree$data$par_care),
+     col ="darkgrey",
+     bty = "n",
+     boxwex = 0.05,
+     ylab = "H-entropy",
+     xlab = "Parental care")
+
+points(pop_multree$data$k_ent_norm ~ jitter(as.integer(as.factor(pop_multree$data$par_care)), 
+                                          amount = 0.1),
+       pch = 16,
+       col = rgb(44,137,160, max=255),
+       cex = 0.7)
+
+points(pop_multree$data[pop_multree$data$species == "Chelydra_serpentina", "k_ent_norm"] ~ rep(1, length(pop_multree$data[pop_multree$data$species == "Chelydra_serpentina", "par_care"])) , 
+       pch = 16,
+       col = "green")
+
+
+points(pop_multree$data[pop_multree$data$species == "Homo_sapiens", "k_ent_norm"] ~ rep(2, length(pop_multree$data[pop_multree$data$species == "Homo_sapiens", "par_care"])) , 
+       pch = 16,
+       col = "red")
+
+
+```
+
+
+
