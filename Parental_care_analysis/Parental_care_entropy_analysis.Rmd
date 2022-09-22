@@ -28,21 +28,20 @@ library(mulTree)
 library(Rage)
 ```
 
-The data is from the COMADRE database version 2.0.1. We will also upload some
-useful functions fromt he COMADRE file.
-
+The data is from the COMADRE database version 2.0.1.
+We will also upload some function to calculate our metrics
 ```{r data}
 
-load("COMADRE_v.X.X.X.RData")
-
+load("COMADRE.RData")
 source("COMADRE_functions.R")
+
 ```
 
 The phylogeny is from the Healy et al 2019 paper (See here https://www.nature.com/articles/s41559-019-0938-7). We can plot it as well.
 
 ```{r phylogeny}
 
-com_tree <- read.tree("COMADRE_phylo_june_2017_100.tre")
+com_tree <- read.tree("axis_analysis_phylo.tre")
 plot(com_tree[[1]], cex = 0.2, type = "fan")
 
 ```
@@ -51,7 +50,7 @@ Next we will  load some trait data associated with parental care.
 
 ```{r trait data}
 
-trophic_data <- read.csv("Trophic_data_June16_2017.csv", 
+trophic_data <- read.csv("Trait_data_19_9_2022.csv", 
                          sep = ",", header = T)
 
 ```
@@ -179,9 +178,9 @@ matrix_size[i] <- dim(combMat[[keep[i]]]$matA)[1]
 first_stage <- unlist(first_stage)
 ```
 
-Now lets calulate when only 5% and 1% are alive as a cutoff criteria, QSD and age at forst reporduction
+Now lets calculate  the age at first reporduction
 
-```{r age at first reporduction}
+```{r age at first reporduction, message=FALSE, warning=FALSE}
 
 
 ##Age at first reproduction
@@ -200,7 +199,7 @@ for(i in 1:length(keep)){
 ```
     
 Now lets calulate the age when 95% an 99% of the mature population is alive
-```{r %alive}
+```{r %alive, message=FALSE, warning=FALSE}
 
 ##age (year) when 99% of chohort are dead
 surv_99 <- vector()
@@ -235,8 +234,8 @@ for(i in 1:length(keep)){
 
 
 
-No let calulate some lifetables
-```{r lifetables}
+No lets calculate some life-tables using the makeLifeTable function
+```{r lifetables, message=FALSE, warning=FALSE}
 
 ###life table
 lxmx_curve <- list()
@@ -256,8 +255,10 @@ for(i in 1:length(keep)){
 ```
 
 
-k_entrpy and AUC
-```{r mean_life_expect}
+Next we will calculate mortality shape using entropy values and AUC measure from the RAGE package and 
+also from our own calculation which uses a spline to standardise across 10 time steps.
+
+```{r mean_life_expect, message=FALSE, warning=FALSE}
 k_ent_rage <- vector()
 AUC_rage <- vector()
 
@@ -289,7 +290,7 @@ for(i in 1:length(keep)){
 
 
 Mean life expectancy
-```{r mean_life_expect}
+```{r mean_life_expect, message=FALSE, warning=FALSE}
 mean_life_expect <- vector()
 for(i in 1:length(keep)){
   tryCatch({	
@@ -301,117 +302,6 @@ for(i in 1:length(keep)){
 }   
 
 ```
-
-
-Life expectancy conditional on reaching sexual maturity
-```{r M_rep_lif_exp}
-M_rep_lif_exp <- vector()
-for(i in 1:length(keep)){
-  tryCatch({	
- 
-  ##life expectancy conditional on reaching reporduction
-    M_rep_lif_exp[i] <- lifeTimeRepEvents(matU =  combMat[[keep[i]]]$matU, 
-                                          matF =  combMat[[keep[i]]]$matF,
-                                          startLife = 1)$meanRepLifeExpectancy
-     
-        },error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
-}   
-
-```
-
-
-
-standard diviation of survival
-```{r Gini}
-
-
-sbins <- 100
-
-surv_sd <- vector()
-surv_mean <- vector()
-
-surv_sd_early <- vector()
-surv_mean_early <- vector()
-
-surv_sd_mature <- vector()
-surv_mean_mature <- vector()
-surv_early_sum <- vector()
-
-prob_d_sd <- vector()
-prob_d_sd_early <- vector()
-prob_d_sd_mature <- vector()
-
-fx_curve <- list()
-
-prob_death <- list()
-
-La_sbins <- vector()
-
-spline_curve <- list()
-##age at which 10% of the population are alive
-
-
-##age at which 90% of the population are alive
-
-
-##calulate f(x) age at death
-for(i in 1:length(keep)){
-  tryCatch({	
-  
-    
-  spline_curve[[i]] <-  unlist(lx_spline(lxmx_curve[[i]]$lx, lxmx_curve[[i]]$x, bins = sbins)[1])
-    
-      La_sbins[i] <- round((life_time_La[i]/length(lxmx_curve[[i]]$lx))*sbins)
-
-  
-  
-      for(z in 1:c(length(spline_curve[[i]])-1)){
-    
-    if(z == 1){fx_curve[i][1] <- 1 - c(spline_curve[[i]][z+1])}
-
-    else{ fx_curve[[i]][z] <- c(spline_curve[[i]][z]) - spline_curve[[i]][z+1]
-    
-  }
-      }
-    
-    
-       for(z in 1:c(length(spline_curve[[i]])-1)){
-    
-    if(z == 1){prob_death[i][1] <- 1 - c(spline_curve[[i]][z+1])}
-
-    else{ prob_death[[i]][z] <- 1 - c(spline_curve[[i]][z+1])/spline_curve[[i]][z]
-    
-  }
-    }
-    
-    
-      
-       surv_sd[i] <- sd(fx_curve[[i]], na.rm = TRUE)
-       prob_d_sd[i] <- sd(prob_death[[i]], na.rm = TRUE)
-
-       surv_sd_early[i] <- sd(fx_curve[[i]][1:c(La_sbins[i]+1)], na.rm = TRUE)
-       surv_sd_mature[i] <- sd(fx_curve[[i]][c(La_sbins[i]):c(length(fx_curve[[i]]))], na.rm = TRUE)
-       
-       prob_d_sd_early[i] <- sd(fx_curve[[i]][1:c(La_sbins[i]+1)], na.rm = TRUE)
-       prob_d_sd_mature[i] <- sd(fx_curve[[i]][c(La_sbins[i]):c(length(fx_curve[[i]]))], na.rm = TRUE)
-       
-       
-       
-       surv_early_sum[i] <- 1 - lxmx_curve[[i]]$lx[La_sbins[i]+1]
-       
-       surv_sd_early[i] <- sd(fx_curve[[i]][1:c(La_sbins[i]+1)], na.rm = TRUE)
-
-       
-       surv_mean[i] <- mean(fx_curve[[i]], na.rm = TRUE)
-       surv_mean_early[i] <- mean(fx_curve[[i]][1:c(La_sbins[i])], na.rm = TRUE)
-       surv_mean_mature[i] <- mean(fx_curve[[i]][c(La_sbins[i]):c(length(fx_curve[[i]]))], na.rm = TRUE)
-   
-    
-        },error=function(e){cat("ERROR :",conditionMessage(e), "\n")})
-}   
-
-```
-
 
 
 
@@ -445,12 +335,10 @@ ind_vital[,"species_ind_full"]  <- gsub(" ","_", ind_vital[,"species_ind_full"])
 
 ```
 
-Next we add in the external infor such as habitat etc.
-
+Next we add in the additaional trait data.
 ```{r  trophic data}
 ##trophic data
 mass_g <- vector()
-repo_size_g <- vector()
 par_care <- vector()
 viv <- vector()
 
@@ -459,9 +347,6 @@ for(k in 1:(length(ind_vital$species_ind_full))){
 
       mass_g[k] <-   (na.omit(trophic_data[trophic_data$species  == as.vector(ind_vital[k,"species_ind_full"]),"mass_g"]))[1]
       
-            repo_size_g[k] <-   (na.omit(trophic_data[trophic_data$species  == as.vector(ind_vital[k,"species_ind_full"]),"repo_size_g"]))[1]
-            
-           
            par_care[k] <-   (na.omit(trophic_data[trophic_data$species  == as.vector(ind_vital[k,"species_ind_full"]),"parental_care"]))[1]
 
 
@@ -482,7 +367,6 @@ Stick them all together
 
 pop_vital <- data.frame(ind_vital,                       
                         mass_g,
-                        repo_size_g,
                         par_care,
                         viv
                          )
@@ -495,24 +379,22 @@ pop_vital <- data.frame(ind_vital,
 
 Let also add some human demography from other sources external to COMADRE
 ```{r human data}
-#load("PPMs Eusrostat 100x100.Rdata")
 load("keyfitz_Agam_100x100.Rdata")
 ```
 
 
-lets just calulate the whole lot together
+lets just calculate the whole lot together
 ```{r human metric}
 
 #Spline bins
 
 sbins <- 10
 
-##I need to come up with a better breack down for these
 #lets calculate for Ireland
 Irish_rows_1960 <- as.numeric(rownames(keyfitz$countryyear[keyfitz$countryyear$country == "Ireland" & keyfitz$countryyear$year > 1960,]))
 Irish_rows_1920 <- as.numeric(rownames(keyfitz$countryyear[keyfitz$countryyear$country == "Ireland" & keyfitz$countryyear$year < 1960,]))
 
-#lets calculate for Sweden as Finland didnt work
+#lets calculate for Sweden
 Sweden_rows_a60 <- as.numeric(rownames(keyfitz$countryyear[keyfitz$countryyear$country == "Sweden" & keyfitz$countryyear$year > 1960,]))
 Sweden_rows_1850_19 <- as.numeric(rownames(keyfitz$countryyear[keyfitz$countryyear$country == "Sweden" & keyfitz$countryyear$year > 1850 & keyfitz$countryyear$year < 1901,]))
 
@@ -672,10 +554,6 @@ for(i in 1:length(human_mats)){
                                  matC =  C_hum, 
                                  startLife = h_life_time_La[i],
                                  nSteps = h_surv_99[i])
-    
-
-    h_gini[i] <- Gini(h_lxmx_curve$lx*h_lxmx_curve$mx)
-
   
   
     h_k_ent_rage[i] <-	entropy_k(h_lxmx_curve$lx, trapeze = FALSE)
@@ -708,7 +586,6 @@ h_ind_vital <- data.frame(
                         h_mean_repo_rate_stable_state,
                         h_mean_repo_rate,
                         h_gen_time,
-                        h_gini,
                         h_M_rep_lif_exp,
                         h_matrix_size,
                         h_surv_95,
@@ -731,14 +608,12 @@ human_dem <- data.frame(species_ind_full = rep("Homo_sapiens", length(human_pop)
                         mean_max_life = c(h_mean_life_expect/h_surv_95),
                         life_time_La = h_life_time_La,
                         first_stage = rep("baby", length(human_pop)),
-                        #surv_sd = h_surv_sd,
                         k_ent_rage = h_k_ent_rage,
                         AUC_rage = h_AUC_rage,
                         k_ent_norm = h_k_ent_norm,
                         AUC_norm = h_AUC_norm,
                         matrix_size = h_matrix_size,
                         mass_g =  rep(trophic_data[trophic_data$species  == "Homo_sapiens","mass_g"],length(pop_country_year)),
-                        repo_size_g = rep(trophic_data[trophic_data$species  == "Homo_sapiens","repo_size_g"],length(pop_country_year)),
                         par_care = rep(trophic_data[trophic_data$species  == "Homo_sapiens","parental_care"],length(pop_country_year)),
                         viv = rep(trophic_data[trophic_data$species  == "Homo_sapiens","repo_type"],length(pop_country_year))
                         )
@@ -746,15 +621,7 @@ human_dem <- data.frame(species_ind_full = rep("Homo_sapiens", length(human_pop)
 full_m_data <- rbind(pop_vital,
                      human_dem)
 
-#add mass specific 
-
-full_m_data <- cbind(full_m_data, 
-                     repo_mas_sp = full_m_data$repo_size_g/full_m_data$mass_g)
-
 ```
-
-
-Now we can clean the data before expoting it
 
 
 Remove biologically crazy species
@@ -842,10 +709,6 @@ ultra_row <- which(is_ultra ==TRUE)
 axis_trees <- axis_trees[ultra_row]
 
 class(axis_trees) <- "multiPhylo"
-
-
-
-axis_comp$dropped$unmatched.rows
 ```
 
 First we make a multree object so we can loop each of the models through the trees

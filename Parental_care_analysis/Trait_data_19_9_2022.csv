@@ -1,131 +1,131 @@
-species,taxonomic_class,common_name,mass_g,repo_type,parental_care,refs,notes,,
-Alces_alces,Mammalia,Eurasian Elk,351000,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Amazona_vittata,Aves,Puerto Rican amazon,281,oviparous,yes,Myhrvold et al 2015,egg mass from Bucher 1983,,
-Ammocrypta_pellucida,Actinopterygii,Eastern sand darter,0.8,oviparous,no,fishbase Anage,egg mass calculated from egg diamter of 0.8mm (Driver and Adams 2013) and a conversion estimate of 0.973 for Kindsvater et al 2016,,
-Ammodramus_savannarum,Aves,Grasshopper Sparrow,17.9,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,this matrix comprisese of survival rates from other sepcies etc,,
-Amphimedon_compressa,Demospongiae,Red tree sponge,182,oviparous,no,Watson et al 2014 0,biovolume mass from xx size based on 40cm high and 4cm diameter tube and a 0.091g per ml (3.14*(40)*(16))*0.09,reproduction size is for a parenchymella larvae of lenth 5mm from (Sadros Identification Guide to Larval Marine Invertebrates of the Pacific Northwest) and assuming a tissue density of 1.0599 g/cm3 http://www.scrollseek.com/training/densitiesofdifferentbodymatter.html,
-Anarhynchus_frontalis,Aves,Wrybill,58.125,oviparous,yes,"Myhrvold et al 2015, Handbook of birds of the world",,,
-Anas_fulvigula,Aves,Mottled Duck,1082,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Anas_laysanensis,Aves,Laysan duck,1082,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Anas_platyrhynchos,Aves,Mallard,1121,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Anser_anser,Aves,Greylag goose,3308.5,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Anthropoides_paradiseus,Aves,Blue Crane,5100,oviparous,yes,Handbook of birds of the world,used Grus genus,,
-Arctocephalus_australis,Mammalia,South American fur seal,67979.43,viviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Astroblepus_ubidiai,Actinopterygii,Andean catfish,14.7,oviparous,no,fishbase weigth calculated based on all LWR estimates for this body shape ,egg mass calculated from egg diamter of 2mm (Velez-Espino and Fox 2005) and a conversion estimate of 0.973 for Kindsvater et al 2016,,
-Bonasa_umbellus,Aves,Ruffed grouse,532,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Bostrychia_hagedash,Aves,Hadada Ibis,1245.25,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world; Healy et al 2014,,,
-Brachyteles_hypoxanthus,Mammalia,Northern Muriqui,10839.905,viviparous,yes,Myhrvold et al 2015; Nowak 1999,cant find infant size,,
-Buteo_solitarius,Aves,Hawaiian Hawk,505,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Callospermophilus_lateralis,Mammalia,Golden-mantled ground squirrel,227.3,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,Spermophilus,,
-Calidris_temminckii,Aves,Temmincks Stint,25.7,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world; Healy et al 2014,,,
-Calyptorhynchus_lathami,Aves,Glossy Black Cockatoo,431.975,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Canis_lupus,Mammalia,Wolf,29190.755,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Cebus_capucinus,Mammalia,White-headed Capuchin,2655,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Centrocercus_minimus,Aves,Gunnison Grouse,1650,oviparous,yes,Myhrvold et al 2015,egg mass average from Apa and Wiechman 2015,,
-Cercopithecus_mitis,Mammalia,Blue Monkey,6116.5,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Cervus_elaphus,Mammalia,Red Deer,160166.665,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Chelodina_expansa,Reptilia,Giant Snake-necked Turtle,4744,oviparous,no,Cann 1998 Australian Freshwater turtles; Bower and Hodges 2014 A Compilation Project of the IUCN SSC Tortoise and Freshwater Turtle Specialist Group; Myhrvold et al 2015,the_wiegth_size_is_for_egg_mass. Probably only have one but may have a second clutch in spring,,
-Chelydra_serpentina,Reptilia,Common Snapping Turtle,5170,oviparous,no,Myhrvold et al 2015,,,
-Chen_caerulescens,Aves,Snow Goose,2630.75,viviparous,yes,Myhrvold et al 2015; Handbook of birds of the world; Healy et al 2014,,,
-Chrysemys_picta,Reptilia,Painted Turtle,371.8,oviparous,no,Ernst and Lovich Turtles of the United States and Canada; Myhrvold et al 2015,,,
-Ciconia_ciconia,Aves,White stork,3350,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Clemmys_guttata,Reptilia,Spotted Turtle,165.4,oviparous,no,Ernst and Lovich Turtles of the United States and Canada; Myhrvold et al 2015,,,
-Coragyps_atratus,Aves,Black Vulture,2080.5,viviparous,yes,Myhrvold et al 2015; Handbook of birds of the world; Healy et al 2014,,,
-Crocodylus_johnsoni,Reptilia,"Freshwater Crocodile, Johnstone River Crocodile",19500,oviparous,yes,Myhrvold et al 2015,,,
-Cryptophis_nigrescens,Reptilia,"Black-banded Trinket Snake, Red Bamboo Snake",1465.5,viviparous,no,Myhrvold et al 2015; Healy et al in prep venom evolution,I cant find evidence of parental care but look again mass from Shine 1984,,
-Cyprinus_carpio,Actinopterygii,Common carp,542.57,oviparous,no,fishbase,,,
-Drymarchon_couperi,Reptilia,Eastern indigo snake,7118,oviparous,no,Myhrvold et al 2015,median of egg range from Hyslop et al 2012,,
-Eidolon_helvum,Mammalia,African Straw-colored Fruit Bat,280.43,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Elephas_maximus,Mammalia,Asian Elephant,3.22E+06,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Emydura_macquarii,Reptilia,Murray River turtle,1740,oviparous,no,Cann 1998 Australian Freshwater turtles; Bower and Hodges 2014 A Compilation Project of the IUCN SSC Tortoise and Freshwater Turtle Specialist Group; Myhrvold et al 2015,need to look elswewhere,,check eggmass above here
-Enhydra_lutris,Mammalia,Sea Otter,943.25,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Esox_lucius,Actinopterygii,pike,1073.82,oviparous,no,fishbase,egg size is mean from Bondarenko et al 2015,,
-Falco_naumanni,Aves,Lesser kestrel,152.5,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Falco_peregrinus,Aves,peregrine falcon,827.25,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world; Healy et al 2014,,,
-Forpus_passerinus,Aves,Green-rumped parrotlet,24,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Fulmarus_glacialis,Aves,Northern Fulmar,785,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world; Healy et al 2014,,,
-Gavia_immer,Aves,Great Northern Loon,4400,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Gavia_immer,Aves,Great Northern Loon,4400,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Genypterus_blacodes,Actinopterygii,Pink cusk eel,5482,oviparous,no,fishbase Anage,egg mass calculated from egg diamter of 2.1mm (Graham 1940) and a conversion estimate of 0.973 for Kindsvater et al 2016,,
-Gorilla_beringei,Mammalia,Eastern Gorilla,139842,viviparous,yes,,,,
-Gyps_coprotheres,Aves,Cape Vulture,7862,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,?,,
-Haliaeetus_albicilla,Aves,White-tailed Eagle,4793,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world; Healy et al 2014,,,
-Haliotis_laevigata,Gastropoda,Smooth Australian abalone,45.7,oviparous,no,Shepherd 1973; Kube et al 2007,mass includes shell. Meat weigth available egg mass from 222um diamter (GRAHAM et al 2006) and a conversion of 0.973 for Kindsvater et al 2016 see Anderson 1978 for metabolism,,
-Haliotis_rufescens,Gastropoda,Red abalone,579.3206336,oviparous,no,Rogers-Bennett et al 2007,egg size from dired wiegh multiplied by five from Buchal et al 1998,,
-Himantopus_novaezelandiae,Aves,Black Stilt,161,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,?,,
-Hippocamelus_bisulcus,Mammalia,Guemal,69620.405,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Hirundo_rustica,Aves,Barn swallow,19,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Homo_sapiens,Mammalia,Humnas,62035,viviparous,yes,All data from Anage and references therin,,,
-Hoplocephalus_bungaroides,Reptilia,Broad-headed Snake,279,viviparous,no,Myhrvold et al 2015; Healy et al in prep venom evolution,offspring size from Webb and Shine 1998 no evidence of parental care,,
-Isurus_oxyrinchus,Elasmobranchii,Shortfin Mako,208088.8,viviparous,no,adult body size from common length of  offspring size from 65cm fishbase,,,
-Jynx_torquilla,Aves,Eurasian wryneck,35.86666667,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Kinosternon_flavescens,Reptilia,Yellow Mud Turtle,331.15,oviparous,no,Myhrvold et al 2015; Handbook of birds of the world,,,
-Kinosternon_integrum,Reptilia,Mexican Mud Turtle,474.4,oviparous,no,,,,
-Kinosternon_subrubrum,Reptilia,Eastern mud turtle,154.7,oviparous,no,Ernst and Lovich Turtles of the United States and Canada; Myhrvold et al 2015,needs more checks on diet,,
-Lagopus_leucura,Aves,White-tailed Ptarmigan,351,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Lagopus_muta,Aves,Rock ptarmigan,521,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Lontra_canadensis,Mammalia,North American River Otter,8087.42,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,not sure about that semifossorial,,
-Lycalopex_culpaeus,Mammalia,Culpeo,13000,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Macaca_mulatta,Mammalia,Rhesus Monkey,6614,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Maccullochella_peelii,Actinopterygii,Murray cod ,2594.72,oviparous,yes,fishbase,mean egg mass from Gunasekera et al 1998,,
-Macquaria_ambigua,Actinopterygii,Golden perch ,3821.53,oviparous,no,fishbase,egg mass from eggs of diameter 3.9mm (Lake 1967) and density of 1.0205 g/cm3 from Pacariz et al 2013,,
-Macropus_eugenii,Mammalia,Tammar wallaby,5037.24,viviparous,yes,Myhrvold et al 2015,,,
-Malaclemys_terrapin,Reptilia,Diamondback terrapin,803,oviparous,no,Ernst and Lovich Turtles of the United States and Canada; Myhrvold et al 2015,,,
-Marmota_flaviventris,Mammalia,Yellow-bellied Marmot,3709.73,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Martes_pennanti,Mammalia,Fisher,3175,viviparous,yes,,,,
-Milvus_migrans,Aves,Black Kite,828.5,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world; Healy et al 2014,,,
-Mirounga_leonina,Mammalia,Southern Elephant Seal,1.40E+06,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Mustela_erminea,Mammalia,Ermine,110.33,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Mya_arenaria,Bivalvia,Soft sheel clam,74,oviparous,no,"Lynch et al 2012 max from MacDonald & Thomas, 1980",agg mass from 38um (Appeldoorn 1995) and a conversion of 0.973 for Kindsvater et al 2016 see Anderson 1978 for metabolism,,
-Nuttallia_obscurata,Bivalvia,purple mahogany clam,9.542072,oviparous,no,mass calculated using allometry for total wieght with shell length 43.7mm Kolpakov and Kolpakov 2005,egg mass from 38um (Dudas and Dower 2006) and a conversion of 0.973 for Kindsvater et al 2016 ,,
-Odocoileus_virginianus,Mammalia,White-tailed Deer,65320,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Oncorhynchus_tshawytscha,Actinopterygii,Chinook_salmon,4600,oviparous,no,fishbase Anage,egg mass avarged from Table 1 in Beacham and Murray 1993,246.6 respiration met at at 20C (mg/kg/h) for a 26g indavidual,
-Onychogalea_fraenata,Mammalia,Bridled Nail-tail Wallaby,5226.025,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,this is the weaned wiegth,,
-Ovis_canadensis,Mammalia,Bighorn Sheep,69125,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Pan_troglodytes,Mammalia,Common Chimpanzee,44983.5,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Panthera_pardus,Mammalia,Leopard,53074.995,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Papio_cynocephalus,Mammalia,Yellow Baboon,17851.25,viviparous,yes,Myhrvold et al 2015; Nowak 1999,?,,
-Paramuricea_clavata,Anthozoa,Violescent sea-whip,3255,oviparous,no,assuming a smax size of 1 meter high and wide and 5cm thick using 2.17g per cm from Herler amd Dirnwober 2011,egg mass from eggs of diameter 0.45mm (Coma  et al1995) and density of 1.0205 g/cm3 from Pacariz et al 2013,,
-Passer_domesticus,Aves,House Sparrow,27.7,oviparous,yes,Myhrvold et al 2015,,,
-Pernis_apivorus,Aves,European Honey Buzzard,762.5,oviparous,yes,"Myhrvold et al 2015; Handbook of birds of the world,Healy et al 2014",,,
-Phacochoerus_aethiopicus,Mammalia,Desert Warthog,73303.76,viviparous,yes,Myhrvold et al 2015,,,
-Phalacrocorax_auritus,Aves,Double-crested Cormorant,1876.5,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world; Healy et al 2014,,,
-Phocarctos_hookeri,Mammalia,New Zealand Sealion,273499.99,viviparous,yes,Myhrvold et al 2015,,,
-Phoebastria_immutabilis,Aves,Laysan Albatross,3050,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world; Healy et al 2014,,,
-Phrynosoma_cornutum,Reptilia,Texas Horned Lizard,27.335,oviparous,no,Whitford and Bryant 1979; Myhrvold et al 2015,haching weight,,
-Physeter_macrocephalus,Mammalia,Sperm Whale,1.01E+07,viviparous,yes,Myhrvold et al 2015,,,
-Picoides_borealis,Aves,Red-cockaded Woodpecker,48,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world; Healy et al 2014,,,
-Podocnemis_expansa,Reptilia,"Arrau River Turtle, South American River Turtle",25800,oviparous,no,Ernst and Lovich Turtles of the United States and Canada; Myhrvold et al 2015,,,
-Podocnemis_lewyana,Reptilia,Rio Magdalena River Turtle,9599,oviparous,no,Myhrvold et al 2015,http://www.iucn-tftsg.org/wp-content/uploads/file/Accounts/crm_5_024_lewyana_v1_2009.pdf,,
-Propithecus_edwardsi,Mammalia,Milne-Edwards's Sifaka,6568.99,viviparous,yes,Myhrvold et al 2015; Nowak 1999,?,,
-Propithecus_verreauxi,Mammalia,Verreaux's Sifaka,3588.26,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Puffinus_auricularis,Aves,Townsend's Shearwater,419.8333333,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world; Healy et al 2014,,,
-Rangifer_tarandus,Mammalia,Reindeer,101250,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Salvelinus_confluentus,Actinopterygii,Bull trout,3102.73,oviparous,no,fishbase,egg mass calculated from egg diamter of 0.56cm (McPhail and Baxter 1996) and a conversion estimate of 0.973 for Kindsvater et al 2016,,
-Sceloporus_arenicolus,Reptilia,Dunes Sagebrush Lizard,6.58,oviparous,no,Myhrvold et al 2015,I see no evidence of parental investment but check,,
-Sceloporus_grammicus,Reptilia,Mesquite lizard,5.64,oviparous,no,Manrique and Ramirez-Bautista 2010; Myhrvold et al 2015,used birth mass,,
-Scolytus_ventralis,Insecta,Fir engraver,1,oviparous,no,,wieght based on 2cm size and that largerst insect of 11cm is only 100g,,
-Setophaga_cerulea,Aves,Cerulean warbler,9.05,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Somateria_mollissima,Aves,common eider,2092,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Sprattus_sprattus,Actinopterygii,European sprat,11.3,oviparous,no,fishbase Anage,,,
-Stellifer_illecebrosus,Actinopterygii,Silver stardrum,20.83045,oviparous,no,no data on egg size,,,
-Sterna_hirundo,Aves,Common Tern,124,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Sternula_antillarum,Aves,Least Tern,46.85,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Strix_occidentalis,Aves,Spotted Owl,609.5,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world; Healy et al 2014,,,
-Tamiasciurus_hudsonicus,Mammalia,Red Squirrel,210.8,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Thalassarche_melanophris,Aves,Black-browed Albatross,3440,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,?,,
-Troglodytes_troglodytes,Aves,Eurasian Wren,9.225,oviparous,yes,,,,
-Turdus_torquatus,Aves,Ring Ouzel,109,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Tympanuchus_cupido,Aves,Greater Prairie Chicken,885.5,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world; Healy et al 2014,,,
-Umbonium_costatum,Gastropoda,Sand snail,2.3,oviparous,no,Noda et al 1991 and Perea et al 2008; maximum is at least 8,22mm diameter from Noda et al 1991 converted to mass using 0.545x(22^2.7)/1000   egg mass calculated from egg diamter of 155um (Noda et al 1994) and a conversion estimate of 0.973 for Kindsvater et al 2016,,
-Urocitellus_armatus,Mammalia,Uinta Ground Squirrel,310.4,viviparous,yes,Myhrvold et al 2015,?,,
-Urocitellus_columbianus,Mammalia,Columbian Ground Squirrel,468.635,viviparous,yes,Myhrvold et al 2015,Spermophilus check met,,
-Urocyon_littoralis,Mammalia,Island Fox,1906.835,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Ursus_americanus,Mammalia,American Black Bear,132405,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Ursus_maritimus,Mammalia,Polar Bear,371703.81,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Vermivora_chrysoptera,Aves,Golden-winged warbler,8.9,oviparous,yes,Myhrvold et al 2015; Handbook of birds of the world,,,
-Vipera_aspis,Reptilia,Sahara Sand Viper,161,viviparous,no,Myhrvold et al 2015; Healy et al in prep venom evolution,offspring mass from Bonnet et al 2001,,
-Xenosaurus_grandis,Reptilia,Knob-scaled Lizard,23.59,viviparous,no,Lemos-Espinal 2004;Myhrvold et al 2015,,,
-Xenosaurus_platyceps,Reptilia,Flathead Knob-scaled Lizard,19.6,viviparous,no,Lemos-Espinal 2004;Myhrvold et al 2015,,,
-Zalophus_californianus,Mammalia,California Sealion,158597.43,viviparous,yes,Myhrvold et al 2015; Healy et al 2014,,,
-Zingel_asper,Actinopterygii,Rhone streber ,3.147875,oviparous,no,fishbase,egg mass calculated from egg diamter of 2.2mm (fishbase) and a conversion estimate of 0.973 for Kindsvater et al 2016,,
+species,taxonomic_class,common_name,mass_g,repo_type,parental_care,refs
+Alces_alces,Mammalia,Eurasian Elk,351000,viviparous,yes,Handbook of the Mammals of the World
+Amazona_vittata,Aves,Puerto Rican amazon,281,oviparous,yes,Handbook of birds of the world
+Ammocrypta_pellucida,Actinopterygii,Eastern sand darter,0.8,oviparous,no,Froese R. and D. Pauly. Editors. 2022.FishBase. World Wide Web electronic publication. www.fishbase.org
+Ammodramus_savannarum,Aves,Grasshopper Sparrow,17.9,oviparous,yes,Handbook of birds of the world
+Amphimedon_compressa,Demospongiae,Red tree sponge,182,oviparous,no,Watson et al 2014
+Anarhynchus_frontalis,Aves,Wrybill,58.125,oviparous,yes,Handbook of birds of the world
+Anas_fulvigula,Aves,Mottled Duck,1082,oviparous,yes,Handbook of birds of the world
+Anas_laysanensis,Aves,Laysan duck,1082,oviparous,yes,Handbook of birds of the world
+Anas_platyrhynchos,Aves,Mallard,1121,oviparous,yes,Handbook of birds of the world
+Anser_anser,Aves,Greylag goose,3308.5,oviparous,yes,Handbook of birds of the world
+Anthropoides_paradiseus,Aves,Blue Crane,5100,oviparous,yes,Handbook of birds of the world
+Arctocephalus_australis,Mammalia,South American fur seal,67979.43,viviparous,yes,Handbook of the Mammals of the World
+Astroblepus_ubidiai,Actinopterygii,Andean catfish,14.7,oviparous,no,Froese R. and D. Pauly. Editors. 2022.FishBase. World Wide Web electronic publication. www.fishbase.org
+Bonasa_umbellus,Aves,Ruffed grouse,532,oviparous,yes,Handbook of birds of the world
+Bostrychia_hagedash,Aves,Hadada Ibis,1245.25,oviparous,yes,Handbook of birds of the world
+Brachyteles_hypoxanthus,Mammalia,Northern Muriqui,10839.905,viviparous,yes,Handbook of the Mammals of the World
+Buteo_solitarius,Aves,Hawaiian Hawk,505,oviparous,yes,Handbook of birds of the world
+Callospermophilus_lateralis,Mammalia,Golden-mantled ground squirrel,227.3,viviparous,yes,Handbook of the Mammals of the World
+Calidris_temminckii,Aves,Temmincks Stint,25.7,oviparous,yes,Handbook of birds of the world
+Calyptorhynchus_lathami,Aves,Glossy Black Cockatoo,431.975,oviparous,yes,Handbook of birds of the world
+Canis_lupus,Mammalia,Wolf,29190.755,viviparous,yes,Handbook of the Mammals of the World
+Cebus_capucinus,Mammalia,White-headed Capuchin,2655,viviparous,yes,Handbook of the Mammals of the World
+Centrocercus_minimus,Aves,Gunnison Grouse,1650,oviparous,yes,Handbook of birds of the world
+Cercopithecus_mitis,Mammalia,Blue Monkey,6116.5,viviparous,yes,Handbook of the Mammals of the World
+Cervus_elaphus,Mammalia,Red Deer,160166.665,viviparous,yes,Handbook of the Mammals of the World
+Chelodina_expansa,Reptilia,Giant Snake-necked Turtle,4744,oviparous,no,Cann 1998 Australian Freshwater turtles
+Chelydra_serpentina,Reptilia,Common Snapping Turtle,5170,oviparous,no,Ernst and Lovich Turtles of the United States and Canada
+Chen_caerulescens,Aves,Snow Goose,2630.75,viviparous,yes,Handbook of birds of the world
+Chrysemys_picta,Reptilia,Painted Turtle,371.8,oviparous,no,Ernst and Lovich Turtles of the United States and Canada; Myhrvold et al 2015
+Ciconia_ciconia,Aves,White stork,3350,oviparous,yes,Handbook of birds of the world
+Clemmys_guttata,Reptilia,Spotted Turtle,165.4,oviparous,no,Ernst and Lovich Turtles of the United States and Canada
+Coragyps_atratus,Aves,Black Vulture,2080.5,viviparous,yes,Handbook of birds of the world
+Crocodylus_johnsoni,Reptilia,"Freshwater Crocodile, Johnstone River Crocodile",19500,oviparous,yes,Myhrvold et al 2015
+Cryptophis_nigrescens,Reptilia,"Black-banded Trinket Snake, Red Bamboo Snake",1465.5,viviparous,no,Myhrvold et al 2015; Healy et al in prep venom evolution
+Cyprinus_carpio,Actinopterygii,Common carp,542.57,oviparous,no,Froese R. and D. Pauly. Editors. 2022.FishBase. World Wide Web electronic publication. www.fishbase.org
+Drymarchon_couperi,Reptilia,Eastern indigo snake,7118,oviparous,no,Myhrvold et al 2015
+Eidolon_helvum,Mammalia,African Straw-colored Fruit Bat,280.43,viviparous,yes,Handbook of the Mammals of the World
+Elephas_maximus,Mammalia,Asian Elephant,3.22E+06,viviparous,yes,Handbook of the Mammals of the World
+Emydura_macquarii,Reptilia,Murray River turtle,1740,oviparous,no,Cann 1998 Australian Freshwater turtles
+Enhydra_lutris,Mammalia,Sea Otter,943.25,viviparous,yes,Handbook of the Mammals of the World
+Esox_lucius,Actinopterygii,pike,1073.82,oviparous,no,Froese R. and D. Pauly. Editors. 2022.FishBase. World Wide Web electronic publication. www.fishbase.org
+Falco_naumanni,Aves,Lesser kestrel,152.5,oviparous,yes,Handbook of birds of the world
+Falco_peregrinus,Aves,peregrine falcon,827.25,oviparous,yes,Handbook of birds of the world
+Forpus_passerinus,Aves,Green-rumped parrotlet,24,oviparous,yes,Handbook of birds of the world
+Fulmarus_glacialis,Aves,Northern Fulmar,785,oviparous,yes,Handbook of birds of the world
+Gavia_immer,Aves,Great Northern Loon,4400,oviparous,yes,Handbook of birds of the world
+Gavia_immer,Aves,Great Northern Loon,4400,oviparous,yes,Handbook of birds of the world
+Genypterus_blacodes,Actinopterygii,Pink cusk eel,5482,oviparous,no,Froese R. and D. Pauly. Editors. 2022.FishBase. World Wide Web electronic publication. www.fishbase.org
+Gorilla_beringei,Mammalia,Eastern Gorilla,139842,viviparous,yes,Handbook of the Mammals of the World
+Gyps_coprotheres,Aves,Cape Vulture,7862,oviparous,yes,Handbook of birds of the world
+Haliaeetus_albicilla,Aves,White-tailed Eagle,4793,oviparous,yes,Handbook of birds of the world
+Haliotis_laevigata,Gastropoda,Smooth Australian abalone,45.7,oviparous,no,Shepherd 1973; Kube et al 2007
+Haliotis_rufescens,Gastropoda,Red abalone,579.3206336,oviparous,no,Rogers-Bennett et al 2007
+Himantopus_novaezelandiae,Aves,Black Stilt,161,oviparous,yes,Handbook of birds of the world
+Hippocamelus_bisulcus,Mammalia,Guemal,69620.405,viviparous,yes,Handbook of the Mammals of the World
+Hirundo_rustica,Aves,Barn swallow,19,oviparous,yes,Handbook of birds of the world
+Homo_sapiens,Mammalia,Humnas,62035,viviparous,yes,Handbook of the Mammals of the World
+Hoplocephalus_bungaroides,Reptilia,Broad-headed Snake,279,viviparous,no,Myhrvold et al 2015; Healy et al in prep venom evolution
+Isurus_oxyrinchus,Elasmobranchii,Shortfin Mako,208088.8,viviparous,no,Froese R. and D. Pauly. Editors. 2022.FishBase. World Wide Web electronic publication. www.fishbase.org
+Jynx_torquilla,Aves,Eurasian wryneck,35.86666667,oviparous,yes,Handbook of birds of the world
+Kinosternon_flavescens,Reptilia,Yellow Mud Turtle,331.15,oviparous,no,Myhrvold et al 2015; Handbook of birds of the world
+Kinosternon_integrum,Reptilia,Mexican Mud Turtle,474.4,oviparous,no,Ernst and Lovich Turtles of the United States and Canada; Myhrvold et al 2015
+Kinosternon_subrubrum,Reptilia,Eastern mud turtle,154.7,oviparous,no,Ernst and Lovich Turtles of the United States and Canada; Myhrvold et al 2015
+Lagopus_leucura,Aves,White-tailed Ptarmigan,351,oviparous,yes,Handbook of birds of the world
+Lagopus_muta,Aves,Rock ptarmigan,521,oviparous,yes,Handbook of birds of the world
+Lontra_canadensis,Mammalia,North American River Otter,8087.42,viviparous,yes,Handbook of the Mammals of the World
+Lycalopex_culpaeus,Mammalia,Culpeo,13000,viviparous,yes,Handbook of the Mammals of the World
+Macaca_mulatta,Mammalia,Rhesus Monkey,6614,viviparous,yes,Handbook of the Mammals of the World
+Maccullochella_peelii,Actinopterygii,Murray cod ,2594.72,oviparous,yes,Froese R. and D. Pauly. Editors. 2022.FishBase. World Wide Web electronic publication. www.fishbase.org
+Macquaria_ambigua,Actinopterygii,Golden perch ,3821.53,oviparous,no,Froese R. and D. Pauly. Editors. 2022.FishBase. World Wide Web electronic publication. www.fishbase.org
+Macropus_eugenii,Mammalia,Tammar wallaby,5037.24,viviparous,yes,Handbook of the Mammals of the World
+Malaclemys_terrapin,Reptilia,Diamondback terrapin,803,oviparous,no,Ernst and Lovich Turtles of the United States and Canada; Myhrvold et al 2015
+Marmota_flaviventris,Mammalia,Yellow-bellied Marmot,3709.73,viviparous,yes,Handbook of the Mammals of the World
+Martes_pennanti,Mammalia,Fisher,3175,viviparous,yes,Handbook of the Mammals of the World
+Milvus_migrans,Aves,Black Kite,828.5,oviparous,yes,Handbook of birds of the world
+Mirounga_leonina,Mammalia,Southern Elephant Seal,1.40E+06,viviparous,yes,Handbook of the Mammals of the World
+Mustela_erminea,Mammalia,Ermine,110.33,viviparous,yes,Handbook of the Mammals of the World
+Mya_arenaria,Bivalvia,Soft sheel clam,74,oviparous,no,Lynch et al 2012
+Nuttallia_obscurata,Bivalvia,purple mahogany clam,9.542072,oviparous,no,Kolpakov and Kolpakov 2005
+Odocoileus_virginianus,Mammalia,White-tailed Deer,65320,viviparous,yes,Handbook of the Mammals of the World
+Oncorhynchus_tshawytscha,Actinopterygii,Chinook_salmon,4600,oviparous,no,Froese R. and D. Pauly. Editors. 2022.FishBase. World Wide Web electronic publication. www.fishbase.org
+Onychogalea_fraenata,Mammalia,Bridled Nail-tail Wallaby,5226.025,viviparous,yes,Handbook of the Mammals of the World
+Ovis_canadensis,Mammalia,Bighorn Sheep,69125,viviparous,yes,Handbook of the Mammals of the World
+Pan_troglodytes,Mammalia,Common Chimpanzee,44983.5,viviparous,yes,Handbook of the Mammals of the World
+Panthera_pardus,Mammalia,Leopard,53074.995,viviparous,yes,Handbook of the Mammals of the World
+Papio_cynocephalus,Mammalia,Yellow Baboon,17851.25,viviparous,yes,Handbook of the Mammals of the World
+Paramuricea_clavata,Anthozoa,Violescent sea-whip,3255,oviparous,no,Herler amd Dirnwober 2011
+Passer_domesticus,Aves,House Sparrow,27.7,oviparous,yes,Handbook of birds of the world
+Pernis_apivorus,Aves,European Honey Buzzard,762.5,oviparous,yes,Handbook of birds of the world
+Phacochoerus_aethiopicus,Mammalia,Desert Warthog,73303.76,viviparous,yes,Handbook of the Mammals of the World
+Phalacrocorax_auritus,Aves,Double-crested Cormorant,1876.5,oviparous,yes,Handbook of birds of the world
+Phocarctos_hookeri,Mammalia,New Zealand Sealion,273499.99,viviparous,yes,Handbook of the Mammals of the World
+Phoebastria_immutabilis,Aves,Laysan Albatross,3050,oviparous,yes,Handbook of birds of the world
+Phrynosoma_cornutum,Reptilia,Texas Horned Lizard,27.335,oviparous,no,Whitford and Bryant 1979; Myhrvold et al 2015
+Physeter_macrocephalus,Mammalia,Sperm Whale,1.01E+07,viviparous,yes,Handbook of the Mammals of the World
+Picoides_borealis,Aves,Red-cockaded Woodpecker,48,oviparous,yes,Handbook of birds of the world
+Podocnemis_expansa,Reptilia,"Arrau River Turtle, South American River Turtle",25800,oviparous,no,Ernst and Lovich Turtles of the United States and Canada; Myhrvold et al 2015
+Podocnemis_lewyana,Reptilia,Rio Magdalena River Turtle,9599,oviparous,no,"Uetz, P., Freed, P, Aguilar, R. & Ho_ek, J.Ê(eds.) (2022) The Reptile Database, http://www.reptile-database.org"
+Propithecus_edwardsi,Mammalia,Milne-Edwards's Sifaka,6568.99,viviparous,yes,Handbook of the Mammals of the World
+Propithecus_verreauxi,Mammalia,Verreaux's Sifaka,3588.26,viviparous,yes,Handbook of the Mammals of the World
+Puffinus_auricularis,Aves,Townsend's Shearwater,419.8333333,oviparous,yes,Handbook of birds of the world
+Rangifer_tarandus,Mammalia,Reindeer,101250,viviparous,yes,Handbook of the Mammals of the World
+Salvelinus_confluentus,Actinopterygii,Bull trout,3102.73,oviparous,no,Froese R. and D. Pauly. Editors. 2022.FishBase. World Wide Web electronic publication. www.fishbase.org
+Sceloporus_arenicolus,Reptilia,Dunes Sagebrush Lizard,6.58,oviparous,no,"Uetz, P., Freed, P, Aguilar, R. & Ho_ek, J.Ê(eds.) (2022) The Reptile Database, http://www.reptile-database.org"
+Sceloporus_grammicus,Reptilia,Mesquite lizard,5.64,oviparous,no,Manrique and Ramirez-Bautista 2010; Myhrvold et al 2015
+Scolytus_ventralis,Insecta,Fir engraver,1,oviparous,no,"Overhulser, Dave. 2005. Fir Engraver Beetle. Oregon Department of Forestry Forest Health Note January 2005."
+Setophaga_cerulea,Aves,Cerulean warbler,9.05,oviparous,yes,Handbook of birds of the world
+Somateria_mollissima,Aves,common eider,2092,oviparous,yes,Handbook of birds of the world
+Sprattus_sprattus,Actinopterygii,European sprat,11.3,oviparous,no,Froese R. and D. Pauly. Editors. 2022.FishBase. World Wide Web electronic publication. www.fishbase.org
+Stellifer_illecebrosus,Actinopterygii,Silver stardrum,20.83045,oviparous,no,Froese R. and D. Pauly. Editors. 2022.FishBase. World Wide Web electronic publication. www.fishbase.org
+Sterna_hirundo,Aves,Common Tern,124,oviparous,yes,Handbook of birds of the world
+Sternula_antillarum,Aves,Least Tern,46.85,oviparous,yes,Handbook of birds of the world
+Strix_occidentalis,Aves,Spotted Owl,609.5,oviparous,yes,Handbook of the Mammals of the World
+Tamiasciurus_hudsonicus,Mammalia,Red Squirrel,210.8,viviparous,yes,Handbook of the Mammals of the World
+Thalassarche_melanophris,Aves,Black-browed Albatross,3440,oviparous,yes,Handbook of birds of the world
+Troglodytes_troglodytes,Aves,Eurasian Wren,9.225,oviparous,yes,Handbook of birds of the world
+Turdus_torquatus,Aves,Ring Ouzel,109,oviparous,yes,Handbook of birds of the world
+Tympanuchus_cupido,Aves,Greater Prairie Chicken,885.5,oviparous,yes,Handbook of birds of the world
+Umbonium_costatum,Gastropoda,Sand snail,2.3,oviparous,no,Noda et al 1991 and Perea et al 2008
+Urocitellus_armatus,Mammalia,Uinta Ground Squirrel,310.4,viviparous,yes,Handbook of the Mammals of the World
+Urocitellus_columbianus,Mammalia,Columbian Ground Squirrel,468.635,viviparous,yes,Handbook of the Mammals of the World
+Urocyon_littoralis,Mammalia,Island Fox,1906.835,viviparous,yes,Handbook of the Mammals of the World
+Ursus_americanus,Mammalia,American Black Bear,132405,viviparous,yes,Handbook of the Mammals of the World
+Ursus_maritimus,Mammalia,Polar Bear,371703.81,viviparous,yes,Handbook of the Mammals of the World
+Vermivora_chrysoptera,Aves,Golden-winged warbler,8.9,oviparous,yes,Handbook of birds of the world
+Vipera_aspis,Reptilia,Sahara Sand Viper,161,viviparous,no,"Street, D., 1979. Reptiles of northern and central Europe. Batsford."
+Xenosaurus_grandis,Reptilia,Knob-scaled Lizard,23.59,viviparous,no,Lemos-Espinal 2004;Myhrvold et al 2015
+Xenosaurus_platyceps,Reptilia,Flathead Knob-scaled Lizard,19.6,viviparous,no,Lemos-Espinal 2004;Myhrvold et al 2015
+Zalophus_californianus,Mammalia,California Sealion,158597.43,viviparous,yes,Handbook of the Mammals of the World
+Zingel_asper,Actinopterygii,Rhone streber ,3.147875,oviparous,no,Froese R. and D. Pauly. Editors. 2022.FishBase. World Wide Web electronic publication. www.fishbase.org
